@@ -4,6 +4,7 @@
    ========================================================================== */
 import SITE from "./content.js";
 import { createCover } from "./covers.js";
+import { createSoundtrack } from "./sound.js";
 
 const { gsap, ScrollTrigger, Lenis } = window;
 gsap.registerPlugin(ScrollTrigger);
@@ -16,6 +17,7 @@ const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 let lenis = null;
 let scene = null;
+let sound = null;
 const covers = new Map(); // canvas element -> cover controller
 
 /* ------------------------------------------------------------------ utils */
@@ -60,8 +62,6 @@ function render() {
   $$('[data-bind="initials"]').forEach((el) => (el.textContent = P.initials));
   $$('[data-bind="year"]').forEach((el) => (el.textContent = year));
 
-  $('[data-slot="status"]').innerHTML = P.available ? '<i class="pulse"></i>' : "";
-
   /* ---- hero */
   const [first, ...rest] = P.name.split(" ");
   $('[data-slot="hero"]').innerHTML = `
@@ -70,19 +70,21 @@ function render() {
     </div>
     <h1 class="hero__title" aria-label="${esc(P.name)}">
       <span class="hero__line"><span class="hero__word" data-split-chars>${esc(first)}</span></span>
-      <span class="hero__line hero__line--2"><em class="hero__word" data-split-chars>${esc(rest.join(" "))}</em><span class="hero__role mono" data-hero-fade>(${esc(P.role)})</span></span>
+      <span class="hero__line hero__line--2"><em class="hero__word" data-split-chars>${esc(rest.join(" "))}</em></span>
     </h1>
     <div class="hero__foot">
       <p class="hero__tagline" data-hero-fade>${fmt(hero.tagline)}</p>
       <dl class="hero__meta mono" data-hero-fade>
-        <div><dt>Based in</dt><dd>${esc(P.location)}</dd></div>
-        <div><dt>Coordinates</dt><dd>${esc(P.coords)}</dd></div>
-        <div><dt>Status</dt><dd>${P.available ? '<i class="pulse"></i>' : ""}${esc(P.availability)}</dd></div>
+        <div><dt>Status</dt><dd>${P.available ? '<i class="pulse"></i>' : ""}${esc(P.availability)} · ${esc(P.location)}</dd></div>
+        ${
+          SITE.music
+            ? `<div><dt>Soundtrack</dt><dd class="hero__music">
+          <button class="hero__play" type="button" data-sound aria-pressed="false"><span class="hero__play-icon">◈</span> <span data-sound-label>Play</span></button>
+          <span class="hero__track">${esc(SITE.music.title || "")}${SITE.music.credit ? `<span> — ${esc(SITE.music.credit)}</span>` : ""}</span>
+        </dd></div>`
+            : ""
+        }
       </dl>
-      <a class="hero__scroll mono" href="#about" data-hero-fade>
-        <span>Scroll to descend the gradient</span>
-        <span class="hero__scroll-line"><i></i></span>
-      </a>
     </div>`;
 
   /* ---- about */
@@ -91,7 +93,7 @@ function render() {
     <div class="about__cols">
       ${about.paragraphs.map((p) => `<p data-reveal>${fmt(p)}</p>`).join("")}
     </div>
-    <dl class="stats">
+    ${about.stats?.length ? `<dl class="stats">
       ${about.stats
         .map(
           (s, i) => `
@@ -101,18 +103,17 @@ function render() {
         </div>`
         )
         .join("")}
-    </dl>`;
+    </dl>` : ""}`;
 
   /* ---- experience / training log */
   const epochs = experience.length;
-  $('[data-slot="log-note"]').textContent = `${epochs} epochs · loss ↓`;
   $('[data-slot="log"]').innerHTML = `
     <div class="log__grid">
       <div class="log__chart">
         <div class="chart" data-reveal>
           <div class="chart__head mono"><span>train / val loss</span><span class="chart__readout">epoch <b data-epoch-now>00</b>/${pad(epochs)} · loss <b data-loss-now>2.303</b></span></div>
           <svg class="chart__svg" viewBox="0 0 400 250" aria-hidden="true"></svg>
-          <div class="chart__foot mono"><span><i class="key key--train"></i>train</span><span><i class="key key--val"></i>val</span><span>x: time · y: ignorance</span></div>
+          <div class="chart__foot mono"><span><i class="key key--train"></i>train</span><span><i class="key key--val"></i>val</span></div>
         </div>
       </div>
       <ol class="log__list">
@@ -144,7 +145,6 @@ function render() {
   /* ---- projects */
   const featured = projects.map((p, i) => ({ p, i })).filter(({ p }) => p.featured !== false);
   const archive = projects.map((p, i) => ({ p, i })).filter(({ p }) => p.featured === false);
-  $('[data-slot="work-note"]').textContent = `(${pad(projects.length)}) · open any to read`;
 
   const tagCounts = {};
   projects.forEach((p) => (p.tags || []).forEach((t) => (tagCounts[t] = (tagCounts[t] || 0) + 1)));
@@ -192,34 +192,19 @@ function render() {
     }`;
 
   /* ---- skills */
-  const allSkills = skills.flatMap((s) => s.items);
   $('[data-slot="toolkit"]').innerHTML = `
     <div class="yaml" data-reveal>
-      <div class="yaml__bar mono"><span class="yaml__dots"><i></i><i></i><i></i></span><span>${esc(P.github.replace(/^https?:\/\/(www\.)?/, ""))}/toolkit.yaml</span><span>v${year}.${pad(new Date().getMonth() + 1)}</span></div>
       <dl class="yaml__body">
-        <div class="yaml__row yaml__row--comment mono"><dt># model card — ${esc(P.name.toLowerCase())}</dt></div>
         ${skills
           .map(
-            (s, i) => `
+            (s) => `
           <div class="yaml__row">
-            <dt class="mono"><span class="yaml__ln">${pad(i + 2)}</span>${esc(s.key)}:</dt>
+            <dt class="mono">${esc(s.key)}</dt>
             <dd>${s.items.map((it) => `<span class="chip">${esc(it)}</span>`).join("")}</dd>
           </div>`
           )
           .join("")}
       </dl>
-    </div>
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee__track">
-        ${[0, 1]
-          .map(
-            () =>
-              `<div class="marquee__group">${allSkills
-                .map((s, i) => `<span class="${i % 3 === 1 ? "is-italic" : ""}">${esc(s)}</span><span class="marquee__star">✳</span>`)
-                .join("")}</div>`
-          )
-          .join("")}
-      </div>
     </div>`;
 
   /* ---- credentials */
@@ -276,10 +261,8 @@ function render() {
 
   /* ---- footer */
   $('[data-slot="footer"]').innerHTML = `
-    <div class="foot__big" aria-hidden="true">${esc(first)} <em>${esc(rest.join(" "))}</em></div>
     <div class="foot__row mono">
-      <span>© ${year} ${esc(P.name)}</span>
-      <span>Set in Instrument Serif, Geist &amp; Geist Mono</span>
+      <span>© ${year}</span>
       <span>Hand-built · no templates</span>
       <a href="#top" data-magnetic><span data-scramble>Back to top</span> ↑</a>
     </div>`;
@@ -302,7 +285,7 @@ function cardHTML(p, i) {
         <div class="card__inner">
           ${media}
           <div class="card__glare"></div>
-          <div class="card__hud mono"><span>${expId(i)}</span><span data-seed-for="${esc(p.slug)}"></span></div>
+          <div class="card__hud mono"><span>${expId(i)}</span></div>
           <span class="card__cta mono">Read the case ${ARROW}</span>
         </div>
       </div>
@@ -415,16 +398,10 @@ function setFigureCaption(i) {
 }
 
 function initHud() {
-  const fill = $(".hud__fill");
-  const z = $(".hud__z");
   const nav = $(".nav");
   let lastY = 0;
   const update = () => {
-    const max = document.documentElement.scrollHeight - innerHeight;
     const y = lenis ? lenis.scroll : scrollY;
-    const p = max > 0 ? Math.min(Math.max(y / max, 0), 1) : 0;
-    fill.style.transform = `scaleY(${p})`;
-    z.textContent = `z ${p.toFixed(2)}`;
     const down = y > lastY;
     if (Math.abs(y - lastY) > 4) nav.classList.toggle("is-hidden", down && y > innerHeight * 0.8 && !root.classList.contains("menu-open"));
     nav.classList.toggle("is-solid", y > 40);
@@ -433,21 +410,6 @@ function initHud() {
   if (lenis) lenis.on("scroll", (l) => { update(); scene?.setVelocity(l.velocity); });
   else addEventListener("scroll", update, { passive: true });
   update();
-}
-
-/* ================================================================= clock */
-function initClock() {
-  const el = $("#clock");
-  const { timezone, tzLabel } = SITE.profile;
-  let f;
-  try {
-    f = new Intl.DateTimeFormat("en-US", { timeZone: timezone, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
-  } catch {
-    f = new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
-  }
-  const tick = () => (el.textContent = `${tzLabel} ${f.format(new Date())}`);
-  tick();
-  setInterval(tick, 1000);
 }
 
 /* ================================================================ cursor */
@@ -555,8 +517,6 @@ function initCovers(scope = document) {
     const c = createCover(cv, cv.dataset.cover, cv.dataset.coverStyle);
     covers.set(cv, c);
     c.render();
-    const seedEl = $(`[data-seed-for="${CSS.escape(cv.dataset.cover)}"]`, cv.closest(".card") || scope);
-    if (seedEl) seedEl.textContent = `${c.style} · seed ${c.seedHex}`;
     const host = cv.closest(".card__link");
     if (host && !reduced) {
       host.addEventListener("pointerenter", () => c.play());
@@ -776,7 +736,7 @@ let caseCover = null;
 function caseHTML(p, i) {
   const all = SITE.projects;
   const next = all[(i + 1) % all.length];
-  const linkLabels = { github: "Source code", live: "Live demo", writeup: "Write-up" };
+  const linkLabels = { github: "Source code", backend: "Backend code", live: "Live demo", writeup: "Write-up" };
   const links = Object.entries(p.links || {}).filter(([, v]) => v);
   const media = p.cover
     ? `<img src="${esc(p.cover)}" alt="${esc(plain(p.title))} — cover" />`
@@ -1093,11 +1053,6 @@ function initReveals() {
       yPercent: -18, opacity: 0.15, ease: "none",
       scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true },
     });
-    gsap.to(".foot__big", {
-      yPercent: 0, ease: "none",
-      startAt: { yPercent: 40 },
-      scrollTrigger: { trigger: ".foot", start: "top bottom", end: "bottom bottom", scrub: true },
-    });
   }
 
 }
@@ -1113,7 +1068,10 @@ function initSections() {
       onToggle: (self) => {
         if (!self.isActive) return;
         currentFigure = fig;
-        if (introDone) scene?.goTo(fig);
+        if (introDone) {
+          scene?.goTo(fig);
+          sound?.setMood(fig);
+        }
         const id = sec.id;
         $$("[data-nav]").forEach((a) => a.classList.toggle("is-active", a.dataset.nav === id || (id === "credentials" && a.dataset.nav === "toolkit")));
       },
@@ -1121,26 +1079,59 @@ function initSections() {
   });
 }
 
-/* ================================================================ marquee */
-function initMarquee() {
-  const track = $(".marquee__track");
-  if (!track) return;
-  let x = 0, skew = 0;
-  const skewTo = gsap.quickSetter(track, "skewX", "deg");
-  const xTo = gsap.quickSetter(track, "x", "px");
-  gsap.ticker.add((t, dtMs) => {
-    const dt = dtMs / 1000;
-    const v = lenis ? lenis.velocity : 0;
-    const half = track.scrollWidth / 2;
-    x -= (reduced ? 0 : 60 + Math.abs(v) * 14) * dt * (v < 0 ? -1 : 1);
-    if (half) {
-      if (x <= -half) x += half;
-      if (x > 0) x -= half;
+/* ================================================================= sound */
+function initSound() {
+  if (!SITE.music || !(window.AudioContext || window.webkitAudioContext)) {
+    $$("[data-sound]").forEach((b) => b.closest(".hero__meta > div, .sound")?.remove());
+    return;
+  }
+  sound = createSoundtrack({ src: SITE.music.src || "" });
+  const buttons = $$("[data-sound]");
+  const bars = $$(".sound__bars i");
+
+  const sync = (on) => {
+    root.classList.toggle("sound-on", on);
+    buttons.forEach((b) => {
+      b.setAttribute("aria-pressed", String(on));
+      b.setAttribute("aria-label", on ? "Pause soundtrack" : "Play soundtrack");
+    });
+    $$("[data-sound-label]").forEach((l) => scramble(l, on ? "Pause" : "Play", 0.35));
+  };
+
+  const toggle = async () => {
+    try {
+      sync(await sound.toggle());
+    } catch (err) {
+      console.warn("[sound] could not start audio", err);
+      sync(false);
     }
-    xTo(x);
-    skew += (Math.max(-12, Math.min(12, -v * 0.6)) - skew) * 0.1;
-    skewTo(skew);
+  };
+  buttons.forEach((b) => b.addEventListener("click", toggle));
+  addEventListener("keydown", (e) => {
+    if (e.key.toLowerCase() === "m" && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest("input, textarea")) toggle();
   });
+
+  // equaliser icon + particles breathe with the music
+  gsap.ticker.add(() => {
+    if (!sound.playing && !root.classList.contains("sound-on")) {
+      if (bars[0]?.__on) {
+        bars.forEach((b) => { b.style.transform = ""; b.__on = false; });
+        scene?.setPulse(0);
+      }
+      return;
+    }
+    const lv = sound.level();
+    scene?.setPulse(lv);
+    sound.bands(bars.length).forEach((v, i) => {
+      bars[i].style.transform = `scaleY(${(0.15 + v * 0.85).toFixed(3)})`;
+      bars[i].__on = true;
+    });
+  });
+}
+
+function onFigure(i) {
+  setFigureCaption(i);
+  sound?.setMood(i);
 }
 
 /* ================================================================== scene */
@@ -1154,7 +1145,7 @@ async function initScene() {
     scene = createScene(canvas, {
       count: small ? 22000 : 52000,
       reducedMotion: reduced,
-      onFigure: setFigureCaption,
+      onFigure,
     });
     scene.start();
     if (finePointer) {
@@ -1230,15 +1221,14 @@ function intro() {
 function signature() {
   console.log(
     "%c PP %c Hi, curious engineer. This site is hand-built: Three.js, GSAP, Lenis, and no templates.\n    Source: " + SITE.profile.github,
-    "background:#ff5a1f;color:#0a0a09;font-weight:700;padding:2px 6px;border-radius:2px",
-    "color:#ece6d9"
+    "background:#6aa9ff;color:#07080a;font-weight:700;padding:2px 6px;border-radius:2px",
+    "color:#e8edf4"
   );
 }
 
 async function boot() {
   render();
   initScroll();
-  initClock();
   initCursor();
   initCovers();
   initTilt();
@@ -1246,8 +1236,8 @@ async function boot() {
   initPreview();
   initPending();
   initCopy();
-  initMarquee();
   initRouter();
+  initSound();
   initMagnetic();
   initScrambleHover();
   $(".nav__menu").addEventListener("click", () => toggleMenu());

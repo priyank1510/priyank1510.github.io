@@ -303,6 +303,7 @@ uniform float uAspect;
 uniform vec3  uBase;
 uniform vec3  uAccent;
 uniform float uAccentRatio;
+uniform float uPulse;
 
 attribute vec3 aP1;
 attribute vec3 aP2;
@@ -316,6 +317,8 @@ varying vec3 vColor;
 varying float vAlpha;
 
 ${SNOISE}
+
+float accentPulse(float r){ return r < uAccentRatio ? 1.0 : 0.0; }
 
 vec3 figure(float i){
   if (i < 0.5) return position;
@@ -360,7 +363,9 @@ void main(){
   gl_Position = clip;
 
   float sizeVar = mix(0.5, 1.7, aRand.z * aRand.z);
-  float size = uSize * uPixelRatio * sizeVar * (9.0 / max(-mv.z, 0.5)) * (1.0 + push * 1.2);
+  // music: brighter, bigger points on the beat — the accent particles most
+  float beat = uPulse * (accentPulse(aRand.y) + 0.35);
+  float size = uSize * uPixelRatio * sizeVar * (9.0 / max(-mv.z, 0.5)) * (1.0 + push * 1.2 + beat * 0.9);
   gl_PointSize = min(size, 34.0 * uPixelRatio);
 
   bool accent = aRand.y < uAccentRatio;
@@ -369,7 +374,7 @@ void main(){
   col = mix(col * bright, uAccent, push * 0.85);
   vColor = col;
 
-  vAlpha = smoothstep(19.0, 5.0, -mv.z) * (1.0 + flight * 0.25);
+  vAlpha = smoothstep(19.0, 5.0, -mv.z) * (1.0 + flight * 0.25 + beat * 0.6);
 }`;
 
 const FRAG = /* glsl */ `
@@ -432,10 +437,11 @@ export function createScene(canvas, opts = {}) {
     uMouse: { value: { x: 10, y: 10 } }, // mutated in place each frame
     uMouseStrength: { value: 0 },
     uAspect: { value: 1 },
-    uBase: { value: new Color("#ece6d9") },
-    uAccent: { value: new Color("#ff5a1f") },
+    uBase: { value: new Color("#e1e9f5") },
+    uAccent: { value: new Color("#5b9bff") },
     uAccentRatio: { value: ACCENT_RATIO },
     uOpacity: { value: 0.85 },
+    uPulse: { value: 0 },
   };
 
   const material = new ShaderMaterial({
@@ -512,6 +518,11 @@ export function createScene(canvas, opts = {}) {
     if (mouse.x > 5) { mouse.x = nx; mouse.y = ny; }
   }
 
+  let pulse = 0, pulseTarget = 0;
+  function setPulse(v) {
+    pulseTarget = v;
+  }
+
   let agitate = 0, agitateTarget = 0;
   function setVelocity(v) {
     agitateTarget = Math.min(Math.abs(v) / 40, 1);
@@ -558,6 +569,8 @@ export function createScene(canvas, opts = {}) {
     parallax.y += ((mouse.target ? mouse.ty : 0) - parallax.y) * (1 - Math.exp(-dt * 1.5));
 
     agitate += (agitateTarget - agitate) * (1 - Math.exp(-dt * 4));
+    // fast attack, slow release, like a VU meter
+    pulse += (pulseTarget - pulse) * (1 - Math.exp(-dt * (pulseTarget > pulse ? 18 : 4)));
     agitateTarget *= Math.exp(-dt * 3);
 
     rig.position.set(cur.x, cur.y, 0);
@@ -575,6 +588,7 @@ export function createScene(canvas, opts = {}) {
     uniforms.uMouseStrength.value = mouse.strength;
     uniforms.uAgitate.value = reducedMotion ? 0 : agitate;
     uniforms.uOpacity.value = 0.85 * cur.o;
+    uniforms.uPulse.value = reducedMotion ? 0 : pulse;
 
     renderer.render(scene, camera);
   }
@@ -601,6 +615,7 @@ export function createScene(canvas, opts = {}) {
     goTo,
     setPointer,
     setVelocity,
+    setPulse,
     start,
     stop,
     get figure() { return to; },

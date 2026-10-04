@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>404 — Out of distribution · Priyank Patel</title>
     <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#0a0a09" />
+    <meta name="theme-color" content="#07080a" />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -114,7 +114,7 @@
             p.vx *= 0.985; p.vy *= 0.985;
             if (!still) { p.x += p.vx + 0.04 * dpr; p.y += p.vy; }
             if (p.x > w) p.x = 0; if (p.x < 0) p.x = w; if (p.y > h) p.y = 0; if (p.y < 0) p.y = h;
-            ctx.fillStyle = p.a ? "rgba(255,90,31,.85)" : "rgba(236,230,217,.45)";
+            ctx.fillStyle = p.a ? "rgba(106,169,255,.85)" : "rgba(232,237,244,.45)";
             ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
           }
           requestAnimationFrame(frame);

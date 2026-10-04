@@ -4,9 +4,9 @@
    ========================================================================== */
 
 const TAU = Math.PI * 2;
-const INK = "#0f0e0c";
-const BONE = "236, 230, 217";
-const ACCENT = "255, 90, 31";
+const INK = "#0c0e12";
+const BONE = "232, 237, 244";
+const ACCENT = "106, 169, 255";
 
 export const COVER_STYLES = ["contours", "flow", "orbits", "halftone", "spectrum"];
 
@@ -280,8 +280,8 @@ export function createCover(canvas, seedStr, style) {
     painters[pick](ctx, w, h, meta, dpr, field, t);
     // vignette
     const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.2, w / 2, h / 2, Math.max(w, h) * 0.75);
-    g.addColorStop(0, "rgba(10,10,9,0)");
-    g.addColorStop(1, "rgba(10,10,9,0.65)");
+    g.addColorStop(0, "rgba(7,8,10,0)");
+    g.addColorStop(1, "rgba(7,8,10,0.65)");
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, w, h);
   }
