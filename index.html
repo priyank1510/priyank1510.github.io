@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Priyank Patel — AI Engineer</title>
+    <meta
+      name="description"
+      content="Priyank Patel — AI engineer and Northeastern CS grad student building language-model, retrieval and ML systems that hold up outside the notebook."
+    />
+    <meta name="author" content="Priyank Patel" />
+    <meta name="theme-color" content="#0a0a09" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://priyank1510.github.io/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://priyank1510.github.io/" />
+    <meta property="og:title" content="Priyank Patel — AI Engineer" />
+    <meta property="og:description" content="Language models, retrieval, and the engineering that makes ML useful. Field notes from latent space." />
+    <meta property="og:image" content="https://priyank1510.github.io/assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Priyank Patel — AI Engineer" />
+    <meta name="twitter:description" content="Language models, retrieval, and the engineering that makes ML useful." />
+    <meta name="twitter:image" content="https://priyank1510.github.io/assets/og.png" />
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.min.js" } }
+    </script>
+    <link rel="modulepreload" href="vendor/three.module.min.js" />
+
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Priyank Patel",
+        "alternateName": "Priyankkumar Chandrakant Patel",
+        "jobTitle": "AI Engineer",
+        "url": "https://priyank1510.github.io/",
+        "email": "mailto:patel.priyankk@northeastern.edu",
+        "alumniOf": [
+          { "@type": "CollegeOrUniversity", "name": "Northeastern University" },
+          { "@type": "CollegeOrUniversity", "name": "Gujarat Technological University" }
+        ],
+        "sameAs": ["https://github.com/priyank1510", "https://www.linkedin.com/in/priyankk"],
+        "knowsAbout": ["Machine Learning", "Retrieval-Augmented Generation", "Natural Language Processing", "Transformers", "Python"]
+      }
+    </script>
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <canvas class="field" id="field" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- ============================================================ loader -->
+    <div class="loader" aria-hidden="true">
+      <div class="loader__row mono">
+        <span>Initialising latent field</span>
+        <span>seed · 1510</span>
+      </div>
+      <div class="loader__count"><span class="loader__num">000</span></div>
+      <div class="loader__bar"><i></i></div>
+      <div class="loader__row mono">
+        <span data-bind="name">Priyank Patel</span>
+        <span>Portfolio · <span data-bind="year">2026</span></span>
+      </div>
+    </div>
+
+    <!-- ============================================================ cursor -->
+    <div class="cursor" aria-hidden="true">
+      <div class="cursor__ring"><span class="cursor__label"></span></div>
+      <div class="cursor__dot"></div>
+    </div>
+
+    <!-- ============================================================ nav -->
+    <header class="nav">
+      <a class="nav__brand" href="#top" data-magnetic aria-label="Back to top">
+        <span class="nav__mono" data-bind="initials">PP</span>
+        <span class="nav__name" data-bind="name">Priyank Patel</span>
+      </a>
+      <div class="nav__clock mono" aria-label="Local time">
+        <span class="nav__status" data-slot="status"></span>
+        <span id="clock">--:--:--</span>
+      </div>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#about" data-nav="about"><span class="idx">01</span><span data-scramble>Abstract</span></a>
+        <a href="#log" data-nav="log"><span class="idx">02</span><span data-scramble>Log</span></a>
+        <a href="#work" data-nav="work"><span class="idx">03</span><span data-scramble>Experiments</span></a>
+        <a href="#toolkit" data-nav="toolkit"><span class="idx">04</span><span data-scramble>Toolkit</span></a>
+        <a href="#contact" data-nav="contact"><span class="idx">05</span><span data-scramble>Contact</span></a>
+      </nav>
+      <button class="nav__menu mono" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="nav__menu-label">Menu</span><i></i><i></i>
+      </button>
+    </header>
+
+    <div class="menu" id="menu" aria-hidden="true">
+      <nav class="menu__links" aria-label="Mobile">
+        <a href="#about"><span class="mono">01</span>Abstract</a>
+        <a href="#log"><span class="mono">02</span>Training log</a>
+        <a href="#work"><span class="mono">03</span>Experiments</a>
+        <a href="#toolkit"><span class="mono">04</span>Toolkit</a>
+        <a href="#contact"><span class="mono">05</span>Contact</a>
+      </nav>
+      <div class="menu__foot mono" data-slot="menu-foot"></div>
+    </div>
+
+    <!-- ============================================================ HUD -->
+    <div class="hud" aria-hidden="true">
+      <div class="hud__fig mono"><i></i><span class="hud__fig-text">Fig. 00 — Initialisation</span></div>
+      <div class="hud__gauge">
+        <span class="hud__z mono">z 0.00</span>
+        <div class="hud__track"><div class="hud__fill"></div></div>
+      </div>
+    </div>
+
+    <main id="main">
+      <!-- ========================================================== hero -->
+      <section class="hero" id="top" data-figure="1" data-slot="hero"></section>
+
+      <!-- ========================================================== about -->
+      <section class="section about" id="about" data-figure="2">
+        <header class="sec-head">
+          <span class="sec-head__idx mono">§ 01</span>
+          <h2 class="sec-head__title" data-split-chars>Abstract</h2>
+          <span class="sec-head__note mono">On method</span>
+        </header>
+        <div data-slot="about"></div>
+      </section>
+
+      <!-- ========================================================== experience -->
+      <section class="section log" id="log" data-figure="3">
+        <header class="sec-head">
+          <span class="sec-head__idx mono">§ 02</span>
+          <h2 class="sec-head__title" data-split-chars>Training log</h2>
+          <span class="sec-head__note mono" data-slot="log-note"></span>
+        </header>
+        <div data-slot="log"></div>
+      </section>
+
+      <!-- ========================================================== projects -->
+      <section class="section work" id="work" data-figure="4">
+        <header class="sec-head">
+          <span class="sec-head__idx mono">§ 03</span>
+          <h2 class="sec-head__title" data-split-chars>Experiments</h2>
+          <span class="sec-head__note mono" data-slot="work-note"></span>
+        </header>
+        <div data-slot="work"></div>
+      </section>
+
+      <!-- ========================================================== skills -->
+      <section class="section toolkit" id="toolkit" data-figure="5">
+        <header class="sec-head">
+          <span class="sec-head__idx mono">§ 04</span>
+          <h2 class="sec-head__title" data-split-chars>Model card</h2>
+          <span class="sec-head__note mono">Toolkit &amp; parameters</span>
+        </header>
+        <div data-slot="toolkit"></div>
+      </section>
+
+      <!-- ========================================================== education -->
+      <section class="section creds" id="credentials" data-figure="5">
+        <header class="sec-head">
+          <span class="sec-head__idx mono">§ 05</span>
+          <h2 class="sec-head__title" data-split-chars>Credentials</h2>
+          <span class="sec-head__note mono">Education &amp; extras</span>
+        </header>
+        <div data-slot="creds"></div>
+      </section>
+
+      <!-- ========================================================== contact -->
+      <section class="section contact" id="contact" data-figure="6">
+        <header class="sec-head">
+          <span class="sec-head__idx mono">§ 06</span>
+          <h2 class="sec-head__title" data-split-chars>Correspondence</h2>
+          <span class="sec-head__note mono">Reply within a day</span>
+        </header>
+        <div data-slot="contact"></div>
+      </section>
+    </main>
+
+    <footer class="foot" data-slot="footer"></footer>
+
+    <!-- ============================================================ case study -->
+    <div class="case" id="case" role="dialog" aria-modal="true" aria-labelledby="case-title" aria-hidden="true">
+      <div class="case__curtain"></div>
+      <div class="case__panel" data-lenis-prevent tabindex="-1">
+        <div class="case__bar">
+          <span class="case__crumb mono"></span>
+          <button class="case__close mono" type="button" data-magnetic>
+            <span data-scramble>Close</span> <span aria-hidden="true">✕</span>
+          </button>
+        </div>
+        <article class="case__body"></article>
+      </div>
+    </div>
+
+    <!-- floating preview for archive rows -->
+    <div class="preview" aria-hidden="true"><canvas></canvas></div>
+
+    <noscript>
+      <div class="noscript">
+        <p>Priyank Patel — AI Engineer.</p>
+        <p>This site is interactive and needs JavaScript. Reach me at
+          <a href="mailto:patel.priyankk@northeastern.edu">patel.priyankk@northeastern.edu</a>,
+          <a href="https://github.com/priyank1510">GitHub</a> or
+          <a href="https://www.linkedin.com/in/priyankk">LinkedIn</a>.</p>
+      </div>
+    </noscript>
+
+    <script defer src="vendor/gsap.min.js"></script>
+    <script defer src="vendor/ScrollTrigger.min.js"></script>
+    <script defer src="vendor/lenis.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

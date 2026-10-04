@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 — Out of distribution · Priyank Patel</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0a0a09" />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+      .lost {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        min-height: 100svh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        padding: 28px var(--gutter);
+      }
+      .lost__top,
+      .lost__foot {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--muted);
+      }
+      .lost__mid {
+        align-self: center;
+      }
+      .lost__code {
+        font-family: var(--serif);
+        font-size: clamp(8rem, 34vw, 32rem);
+        line-height: 0.78;
+        letter-spacing: -0.06em;
+      }
+      .lost__code em {
+        color: var(--accent);
+      }
+      .lost__text {
+        font-weight: 400;
+        margin-top: 4vh;
+        max-width: 30ch;
+        font-family: var(--serif);
+        font-size: clamp(1.8rem, 3.6vw, 3.2rem);
+        line-height: 1.05;
+      }
+      .lost__links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 5vh;
+      }
+      #drift {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="drift" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <main class="lost">
+      <div class="lost__top mono">
+        <a href="/">← Priyank Patel</a>
+        <span>Error · out of distribution</span>
+      </div>
+      <div class="lost__mid">
+        <div class="lost__code" aria-hidden="true">4<em>0</em>4</div>
+        <h1 class="lost__text">This point isn't in the embedding space. Here are its nearest neighbours:</h1>
+        <div class="lost__links">
+          <a class="btn" href="/">Home</a>
+          <a class="btn btn--ghost" href="/#work">Experiments</a>
+          <a class="btn btn--ghost" href="/#log">Training log</a>
+          <a class="btn btn--ghost" href="/#contact">Contact</a>
+        </div>
+      </div>
+      <div class="lost__foot mono">
+        <span>p(x) ≈ 0.0000</span>
+        <span>Fig. 404 — Anomaly, unlabelled</span>
+      </div>
+    </main>
+    <script>
+      // a slow field of points drifting away from the cursor
+      (() => {
+        const cv = document.getElementById("drift");
+        const ctx = cv.getContext("2d");
+        const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let w, h, dpr, pts = [], mx = -1e4, my = -1e4;
+        function size() {
+          dpr = Math.min(devicePixelRatio || 1, 2);
+          w = cv.width = innerWidth * dpr;
+          h = cv.height = innerHeight * dpr;
+          pts = Array.from({ length: Math.round((innerWidth * innerHeight) / 2600) }, () => ({
+            x: Math.random() * w, y: Math.random() * h,
+            vx: (Math.random() - 0.5) * 0.15 * dpr, vy: (Math.random() - 0.5) * 0.15 * dpr,
+            r: (0.5 + Math.random() * 1.3) * dpr, a: Math.random() < 0.08,
+          }));
+        }
+        function frame() {
+          ctx.clearRect(0, 0, w, h);
+          for (const p of pts) {
+            const dx = p.x - mx, dy = p.y - my, d = Math.hypot(dx, dy) || 1;
+            if (d < 160 * dpr) { p.vx += (dx / d) * 0.06 * dpr; p.vy += (dy / d) * 0.06 * dpr; }
+            p.vx *= 0.985; p.vy *= 0.985;
+            if (!still) { p.x += p.vx + 0.04 * dpr; p.y += p.vy; }
+            if (p.x > w) p.x = 0; if (p.x < 0) p.x = w; if (p.y > h) p.y = 0; if (p.y < 0) p.y = h;
+            ctx.fillStyle = p.a ? "rgba(255,90,31,.85)" : "rgba(236,230,217,.45)";
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+          }
+          requestAnimationFrame(frame);
+        }
+        addEventListener("resize", size);
+        addEventListener("pointermove", (e) => { mx = e.clientX * dpr; my = e.clientY * dpr; });
+        size();
+        frame();
+      })();
+    </script>
+  </body>
+</html>
