@@ -63,6 +63,12 @@ function render() {
   $$('[data-bind="initials"]').forEach((el) => (el.textContent = P.initials));
   $$('[data-bind="year"]').forEach((el) => (el.textContent = year));
 
+  const cv = $('[data-slot="nav-cv"]');
+  if (P.resume) {
+    cv.href = P.resume;
+    cv.hidden = false;
+  }
+
   /* ---- hero */
   const [first, ...rest] = P.name.split(" ");
   $('[data-slot="hero"]').innerHTML = `
@@ -785,7 +791,15 @@ function caseHTML(p, i) {
         }
         ${
           p.gallery?.length
-            ? `<div class="case__gallery">${p.gallery.map((g) => `<img src="${esc(g)}" alt="${esc(plain(p.title))} — figure" loading="lazy" />`).join("")}</div>`
+            ? `<div class="case__gallery">${p.gallery
+                .map((g) => (typeof g === "string" ? { src: g } : g))
+                .map(
+                  (g, k) => `<figure class="figure">
+                <img src="${esc(g.src)}" alt="${esc(g.caption || `${plain(p.title)} — figure ${k + 1}`)}" loading="lazy" />
+                ${g.caption ? `<figcaption class="mono"><span>Fig. ${k + 1}</span>${esc(g.caption)}</figcaption>` : ""}
+              </figure>`
+                )
+                .join("")}</div>`
             : ""
         }
       </div>

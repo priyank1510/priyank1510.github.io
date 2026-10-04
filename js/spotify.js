@@ -34,12 +34,14 @@ function loadApi() {
   return apiPromise;
 }
 
-export function createSpotifyPlayer({ link, onChange = () => {} }) {
+export function createSpotifyPlayer({ link, loop = true, onChange = () => {} }) {
   const uri = toSpotifyUri(link);
   let controller = null;
   let ready = null;
   let playing = false;
   let started = false;
+  let wantPlaying = false;
+  let restarting = false;
   const t0 = performance.now();
 
   // a small dock that holds the official player while music is on
@@ -72,7 +74,17 @@ export function createSpotifyPlayer({ link, onChange = () => {} }) {
         new Promise((resolve) => {
           API.createController(mount, { uri, width: "100%", height: 80 }, (c) => {
             controller = c;
-            c.addListener("playback_update", (e) => setPlaying(!e.data.isPaused));
+            c.addListener("playback_update", (e) => {
+              const { isPaused, position, duration } = e.data;
+              lastProgress = performance.now();
+              // Spotify parks at position === duration when a track ends; start it over
+              if (loop && wantPlaying && duration > 0 && position >= duration - 250) {
+                restart();
+                return;
+              }
+              if (position < duration - 250) restarting = false;
+              setPlaying(!isPaused);
+            });
             c.addListener("ready", () => resolve(c));
             setTimeout(() => resolve(c), 4000); // don't hang if "ready" was missed
           });
@@ -82,7 +94,21 @@ export function createSpotifyPlayer({ link, onChange = () => {} }) {
     return ready;
   }
 
+  let lastProgress = 0;
+  function restart() {
+    if (restarting || !controller) return;
+    restarting = true;
+    controller.play(); // play() starts the loaded track from the top
+    // if Spotify ignores it, try again until updates resume
+    setTimeout(function check() {
+      if (!restarting || !wantPlaying) return;
+      if (performance.now() - lastProgress > 2000) controller.play();
+      setTimeout(check, 2500);
+    }, 2500);
+  }
+
   async function play() {
+    wantPlaying = true;
     show(true);
     const c = await init();
     if (started) c.resume();
@@ -94,6 +120,7 @@ export function createSpotifyPlayer({ link, onChange = () => {} }) {
   }
 
   function pause() {
+    wantPlaying = false;
     controller?.pause();
     setPlaying(false);
   }

@@ -480,6 +480,29 @@ button:hover .arr {
   gap: clamp(14px, 2vw, 30px);
 }
 
+.nav__cv {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  color: var(--paper);
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    border-color 0.3s;
+}
+.nav__cv:hover {
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+.nav__cv[hidden] {
+  display: none;
+}
+
 /* sound toggle — an equaliser that listens to the soundtrack */
 .sound {
   display: grid;
@@ -889,7 +912,7 @@ a.hero__track:hover span {
   right: var(--gutter);
   top: calc(var(--nav-h) + 6px);
   z-index: 170;
-  width: min(340px, calc(100vw - 2 * var(--gutter)));
+  width: min(290px, calc(100vw - 2 * var(--gutter)));
   border-radius: 12px;
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
   opacity: 0;
@@ -1623,7 +1646,7 @@ a.hero__track:hover span {
   position: relative;
   font-family: var(--serif);
   font-style: italic;
-  font-size: clamp(1.7rem, 4vw, 3.8rem);
+  font-size: clamp(1.3rem, 2.5vw, 2.3rem);
   line-height: 1.1;
   letter-spacing: -0.01em;
   word-break: break-all;
@@ -1895,9 +1918,31 @@ a.hero__track:hover span {
   display: grid;
   gap: 24px;
 }
-.case__gallery img {
+.case__gallery {
+  margin-top: 8px;
+}
+.figure {
+  margin: 0;
+}
+.figure img {
   width: 100%;
+  border-radius: 6px;
   border: 1px solid var(--line);
+  background: #fff;
+}
+.figure figcaption {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+  color: var(--paper-dim);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+.figure figcaption span {
+  flex: none;
+  color: var(--accent);
+  text-transform: uppercase;
 }
 .case__next {
   display: block;
@@ -1977,7 +2022,8 @@ html:not(.js) .loader {
   .nav {
     grid-template-columns: 1fr auto;
   }
-  .nav__links {
+  .nav__links,
+  .nav__cv {
     display: none;
   }
   .nav__menu {

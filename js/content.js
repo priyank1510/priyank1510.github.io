@@ -15,22 +15,22 @@ export default {
     name: "Priyank Patel",
     fullName: "Priyankkumar Chandrakant Patel",
     initials: "PP",
-    role: "AI Engineer",
+    role: "AI & Data Engineer",
     location: "Boston, MA",
     email: "patel.priyankk@northeastern.edu",
     github: "https://github.com/priyank1510",
     linkedin: "https://www.linkedin.com/in/priyankk",
     resume: "assets/Priyank-Patel-Resume.pdf", // set to "" to hide the résumé button
     available: true,
-    availability: "Open to full-time AI / ML & software roles",
+    availability: "Open to full-time AI / ML & data engineering roles",
   },
 
   /* ------------------------------------------------------------------- hero */
   hero: {
-    kicker: ["AI Engineer", "MS Computer Science", "Northeastern University"],
+    kicker: ["AI & Data Engineer", "MS Computer Science", "Northeastern University"],
     // *word* = italic.
     tagline:
-      "I train models and build the software around them — medical-document pipelines, retrieval-augmented chat, and classifiers that hold up *outside* the notebook.",
+      "I build the data pipelines that feed models, and the models on top of them — from ETL and warehouses to retrieval-augmented chat and classifiers that hold up *outside* the notebook.",
   },
 
   /* ------------------------------------------------------------------ about */
@@ -39,7 +39,7 @@ export default {
     statement:
       "I'm Priyank — a computer-science graduate student who likes the *unglamorous* half of machine learning: cleaning the data, measuring where the model ^fails^, and shipping the pipeline so the result is actually useful to someone.",
     paragraphs: [
-      "What I care about is the engineering that makes a model trustworthy: evaluation harnesses, clean APIs, reproducible pipelines, and benchmarks that tell the truth.",
+      "What I care about is the plumbing that makes ML trustworthy: reliable ETL, well-modeled warehouses, reproducible evaluation, clean APIs, and benchmarks that tell the truth.",
     ],
     // Optional count-up numbers, e.g. { value: 95, suffix: "%", label: "F1 on ..." }.
     // Left empty on purpose — the numbers already live in the log and projects.
@@ -92,7 +92,7 @@ export default {
   // The final, open-ended row of the training log.
   nextEpoch: {
     title: "Your team",
-    text: "Looking for a full-time role in AI / ML engineering or software. If you're building something that learns, let's talk.",
+    text: "Looking for a full-time role in AI / ML or data engineering. If you're building something that learns — or the pipelines that feed it — let's talk.",
     cta: "Start a conversation",
   },
 
@@ -117,6 +117,10 @@ export default {
         "Replay is deterministic with no model in the loop, and hands off to a human operator when it cannot finish safely.",
         "Handles many tenants running the same vendor product configured differently, and the full test suite runs without an API key.",
       ],
+      gallery: [
+        { src: "assets/projects/cua-awaiting-confirmation.png", caption: "Replay pauses for a human before an irreversible step (opening an account)." },
+        { src: "assets/projects/cua-member-not-found.png", caption: "A real runtime error state, detected and reported as a typed business outcome." },
+      ],
     },
     {
       slug: "multi-doc-rag",
@@ -139,6 +143,27 @@ export default {
         "MiniLM sentence-transformer embeddings in a FAISS index; follow-up questions are rewritten into standalone queries before retrieval.",
         "Answers only from retrieved sources, refuses below a relevance threshold, and falls back to extractive answers without an API key.",
         "Benchmarked six chunking strategies (Hit@k, MRR, off-topic refusal) — sentence-aligned 250-token chunks ranked best.",
+      ],
+    },
+    {
+      slug: "pharma-sales-warehouse",
+      title: "Pharma Sales *Data Warehouse*",
+      kind: "Data engineering · SQL",
+      year: "2024",
+      summary: "An ETL pipeline from CSV and XML sources into a dimensional warehouse, with analytical reports on pharmaceutical sales.",
+      tags: ["R", "SQL", "MySQL", "SQLite", "ETL"],
+      cover: "",
+      coverStyle: "contours",
+      featured: true,
+      links: { github: "https://github.com/priyank1510/Pharmaceutical-Data-Warehouse-Analysis" },
+      metrics: [
+        { value: "200+", label: "Datasets integrated" },
+        { value: "20+", label: "Regions tracked" },
+      ],
+      highlights: [
+        "Extracted sales data from CSV and XML, staged it in SQLite, and loaded it into a dimensional schema in MySQL.",
+        "Wrote the ETL in R (RSQLite, RMySQL) and an R Markdown report on sales trends, revenue per product, country sales and rep performance.",
+        "Tracked sales performance across 20+ regions with kableExtra tables.",
       ],
     },
     {
@@ -177,14 +202,15 @@ export default {
       links: { github: "https://github.com/priyank1510/Food_desert_in_USA" },
       metrics: [
         { value: "39M", label: "People living in food deserts" },
-        { value: "4×", label: "Higher risk without a vehicle" },
+        { value: "12.8%", label: "Of US census tracts are food deserts" },
       ],
       highlights: [
         "Cleaned and engineered features across 72,531 census tracts and 147 variables.",
         "Roughly 1 in 8 tracts are food deserts, concentrated in the South and Southwest; urban tracts are nearly twice as affected as rural ones.",
-        "Transportation is the hidden driver: low vehicle access means up to 4× higher food-desert rates.",
+        "Transportation matters: tracts where 5–30% of homes lack a car have roughly 2.5× the food-desert rate of tracts where nearly everyone drives.",
         "At the same poverty level, food-desert tracts rely more on SNAP — a disadvantage that goes beyond income.",
       ],
+      gallery: [{ src: "assets/projects/food-deserts-poverty.png", caption: "Food-desert tracts have markedly higher poverty rates (median and spread by tract type)." }],
     },
     {
       slug: "boston-crime-analysis",
@@ -203,27 +229,6 @@ export default {
         "Classified Boston crime incidents into four severity levels with XGBoost.",
         "Built a cluster map showing where crime concentrates and how it shifts over time.",
         "Applied NLP sentiment analysis to gauge public perception of crime and safety.",
-      ],
-    },
-    {
-      slug: "pharma-sales-warehouse",
-      title: "Pharma Sales *Data Warehouse*",
-      kind: "Data engineering · SQL",
-      year: "2024",
-      summary: "An ETL pipeline from CSV and XML sources into a dimensional warehouse, with analytical reports on pharmaceutical sales.",
-      tags: ["R", "SQL", "MySQL", "SQLite", "ETL"],
-      cover: "",
-      coverStyle: "contours",
-      featured: true,
-      links: { github: "https://github.com/priyank1510/Pharmaceutical-Data-Warehouse-Analysis" },
-      metrics: [
-        { value: "200+", label: "Datasets integrated" },
-        { value: "20+", label: "Regions tracked" },
-      ],
-      highlights: [
-        "Extracted sales data from CSV and XML, staged it in SQLite, and loaded it into a dimensional schema in MySQL.",
-        "Wrote the ETL in R (RSQLite, RMySQL) and an R Markdown report on sales trends, revenue per product, country sales and rep performance.",
-        "Tracked sales performance across 20+ regions with kableExtra tables.",
       ],
     },
 
@@ -291,11 +296,12 @@ export default {
   /* --------------------------------------------------------------- skills */
   // Rendered as a "model card". Keys are the row labels.
   skills: [
-    { key: "languages", items: ["Python", "Java", "C", "JavaScript", "R", "SQL"] },
+    { key: "languages", items: ["Python", "SQL", "Java", "C", "JavaScript", "R"] },
+    { key: "data engineering", items: ["ETL pipelines", "Data warehousing", "Star & snowflake schemas", "OLAP", "Spark", "Snowflake", "Tableau"] },
     { key: "ml / dl", items: ["PyTorch", "TensorFlow", "scikit-learn", "Pandas", "NumPy", "Matplotlib"] },
     { key: "llm stack", items: ["LangChain", "RAG", "Transformers", "Embeddings", "Vector search"] },
     { key: "web & apis", items: ["FastAPI", "REST", "Node.js", "React"] },
-    { key: "data & cloud", items: ["PostgreSQL", "MySQL", "MongoDB", "SQLite", "Spark", "AWS", "GCP"] },
+    { key: "databases & cloud", items: ["PostgreSQL", "MySQL", "MongoDB", "SQLite", "AWS (S3, DynamoDB)", "GCP"] },
     { key: "engineering", items: ["System design", "Testing", "Docker", "CI/CD", "Git", "Agile / Scrum"] },
     { key: "research", items: ["Language modeling", "RAG", "Transformer architectures", "NLP", "Reinforcement learning"] },
   ],
@@ -378,6 +384,6 @@ export default {
         { title: "Approach", text: "..." },
         { title: "Result", text: "..." },
       ],
-      gallery: [],                         // optional extra images: ["assets/projects/a.jpg"]
+      gallery: [],                         // optional figures: [{ src: "assets/projects/a.png", caption: "..." }]
     },
    ========================================================================== */
