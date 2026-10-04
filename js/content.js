@@ -335,13 +335,17 @@ export default {
   },
 
   /* ---------------------------------------------------------------- music */
-  // The ◈ Play buttons. With `src` empty, the site composes its own ambient
-  // soundtrack live in the browser. To use a real track instead, put an MP3
-  // you have the rights to in assets/ and set src: "assets/your-track.mp3".
+  // The ◈ Play buttons. Three options, first one set wins:
+  //  1. spotify: a Spotify track / album / playlist link — plays in Spotify's
+  //     official player (full song for visitors logged into Spotify, a 30-second
+  //     preview for everyone else). Licensed, and the artist gets the stream.
+  //  2. src: an MP3 in assets/ that you have the rights to.
+  //  3. neither: the site composes its own ambient soundtrack live.
   music: {
+    spotify: "https://open.spotify.com/track/0KnVSP9uNabmU6ph25BOSK",
     src: "",
-    title: "Latent Drift",
-    credit: "generative",
+    title: "Middle of Nowhere",
+    credit: "Macabre Plaza",
   },
 
   /* ------------------------------------------------------------- settings */

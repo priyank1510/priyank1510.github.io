@@ -875,6 +875,69 @@ button:hover .arr {
 .hero__track span {
   color: var(--muted);
 }
+a.hero__track {
+  transition: color 0.3s;
+}
+a.hero__track:hover,
+a.hero__track:hover span {
+  color: var(--accent);
+}
+
+/* Spotify dock — only visible while music is on */
+.dock {
+  position: fixed;
+  right: var(--gutter);
+  top: calc(var(--nav-h) + 6px);
+  z-index: 170;
+  width: min(340px, calc(100vw - 2 * var(--gutter)));
+  border-radius: 12px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-16px);
+  transition:
+    opacity 0.5s var(--ease),
+    transform 0.7s var(--ease),
+    visibility 0s linear 0.7s;
+}
+.dock-open .dock {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.5s var(--ease),
+    transform 0.7s var(--ease);
+}
+.dock__embed iframe {
+  display: block;
+  width: 100%;
+  height: 80px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--ink-3);
+}
+.dock__close {
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  background: var(--ink-2);
+  color: var(--paper-dim);
+  font-size: 10px;
+  transition:
+    color 0.3s,
+    border-color 0.3s;
+}
+.dock__close:hover {
+  color: var(--paper);
+  border-color: var(--accent);
+}
 /* ----------------------------------------------------------------- about */
 .about__statement {
   font-family: var(--serif);
@@ -1923,6 +1986,14 @@ html:not(.js) .loader {
   .hud__fig {
     bottom: 12px;
     font-size: 9.5px;
+  }
+  .dock {
+    top: auto;
+    bottom: 16px;
+    transform: translateY(16px);
+  }
+  .dock-open .hud {
+    opacity: 0;
   }
   .sec-head {
     grid-template-columns: 1fr auto;

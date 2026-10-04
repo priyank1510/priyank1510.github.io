@@ -3,7 +3,7 @@
 Personal portfolio of **Priyank Patel**, AI engineer. A hand-built static site with no build step and no framework:
 
 - **Latent field.** 52,000 GPU particles (Three.js + custom shaders) morph between ML figures as you scroll: embedding sphere → torus-knot manifold → loss landscape → latent clusters → tensor → accretion disk. Particles near the cursor push away and glow blue.
-- **Soundtrack.** "◈ Play" in the hero (or the equaliser button in the nav, or the `M` key) starts *Latent Drift*, an ambient piece composed live in the browser with the Web Audio API. Its mood follows the section you're in, and the particles pulse with it.
+- **Music.** "◈ Play" in the hero (or the equaliser button in the nav, or the `M` key) plays *Middle of Nowhere* by Macabre Plaza through Spotify's official player: the full song for visitors logged into Spotify, a 30-second preview for everyone else. With no Spotify link set, the site falls back to *Latent Drift*, an ambient piece composed live in the browser.
 - **Generative covers.** Every project gets its own artwork (contours, flow fields, orbits, halftone or ridgelines), seeded by its slug. You never need a screenshot, and hovering a cover animates it.
 - **Name.** Set in Dela Gothic One as an anime-style title card: hard blue offset shadow, outlined surname.
 - **Training log.** Experience reads as epochs, with a loss curve that draws as you scroll.
@@ -63,7 +63,11 @@ Optional extras in `settings`: `showInProgressCard: true` adds an animated "curr
 | Education, certifications, activities | `education`, `certifications`, `activities` |
 | Contact headline | `contact` |
 
-### Using your own music
+### Changing the music
+
+To play a different song, set `music.spotify` to any Spotify track, album or playlist link (Share → Copy link), and update `title` and `credit`.
+
+### Using your own MP3
 
 The built-in soundtrack is generated in code, so there's nothing to license. To play a real track instead, put an MP3 **you have the rights to** in `assets/` (royalty-free sources include Pixabay Music and the YouTube Audio Library) and set:
 
@@ -126,7 +130,8 @@ js/content.js         ← all of your content
 js/main.js            rendering, scroll choreography, cursor, case studies
 js/scene.js           the WebGL particle field
 js/covers.js          generative project covers
-js/sound.js           the generative soundtrack (Web Audio)
+js/sound.js           the generative fallback soundtrack (Web Audio)
+js/spotify.js         Spotify player wired to the ◈ Play buttons
 vendor/               three.js r186, GSAP 3.15 + ScrollTrigger, Lenis 1.3 (local copies, no CDN)
 assets/               favicon, share image, résumé, project images
 ```

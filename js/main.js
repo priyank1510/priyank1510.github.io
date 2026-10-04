@@ -5,6 +5,7 @@
 import SITE from "./content.js";
 import { createCover } from "./covers.js";
 import { createSoundtrack } from "./sound.js";
+import { createSpotifyPlayer, toSpotifyUri } from "./spotify.js";
 
 const { gsap, ScrollTrigger, Lenis } = window;
 gsap.registerPlugin(ScrollTrigger);
@@ -80,7 +81,13 @@ function render() {
           SITE.music
             ? `<div><dt>Soundtrack</dt><dd class="hero__music">
           <button class="hero__play" type="button" data-sound aria-pressed="false"><span class="hero__play-icon">◈</span> <span data-sound-label>Play</span></button>
-          <span class="hero__track">${esc(SITE.music.title || "")}${SITE.music.credit ? `<span> — ${esc(SITE.music.credit)}</span>` : ""}</span>
+          ${(() => {
+            const M = SITE.music;
+            const label = `${esc(M.title || "")}${M.credit ? `<span> — ${esc(M.credit)}</span>` : ""}`;
+            return toSpotifyUri(M.spotify)
+              ? `<a class="hero__track" href="${esc(M.spotify)}" target="_blank" rel="noopener">${label}</a>`
+              : `<span class="hero__track">${label}</span>`;
+          })()}
         </dd></div>`
             : ""
         }
@@ -1081,11 +1088,12 @@ function initSections() {
 
 /* ================================================================= sound */
 function initSound() {
-  if (!SITE.music || !(window.AudioContext || window.webkitAudioContext)) {
+  const M = SITE.music;
+  const spotify = M && toSpotifyUri(M.spotify);
+  if (!M || (!spotify && !(window.AudioContext || window.webkitAudioContext))) {
     $$("[data-sound]").forEach((b) => b.closest(".hero__meta > div, .sound")?.remove());
     return;
   }
-  sound = createSoundtrack({ src: SITE.music.src || "" });
   const buttons = $$("[data-sound]");
   const bars = $$(".sound__bars i");
 
@@ -1097,6 +1105,10 @@ function initSound() {
     });
     $$("[data-sound-label]").forEach((l) => scramble(l, on ? "Pause" : "Play", 0.35));
   };
+
+  sound = spotify
+    ? createSpotifyPlayer({ link: M.spotify, onChange: sync }) // play/pause can also come from the embed itself
+    : createSoundtrack({ src: M.src || "" });
 
   const toggle = async () => {
     try {
