@@ -21,6 +21,7 @@ export default {
     github: "https://github.com/priyank1510",
     linkedin: "https://www.linkedin.com/in/priyankk",
     resume: "assets/Priyank-Patel-Resume.pdf", // set to "" to hide the résumé button
+    photo: "assets/priyank.webp", // shown in the Abstract section — set to "" to hide
     available: true,
     availability: "Open to full-time AI / ML & data engineering roles",
   },
@@ -30,16 +31,16 @@ export default {
     kicker: ["AI & Data Engineer", "MS Computer Science", "Northeastern University"],
     // *word* = italic.
     tagline:
-      "I build the data pipelines that feed models, and the models on top of them — from ETL and warehouses to retrieval-augmented chat and classifiers that hold up *outside* the notebook.",
+      "I build data pipelines and the ML systems that run on them — from ETL and warehouses to retrieval-augmented assistants and models that hold up *outside* the notebook.",
   },
 
   /* ------------------------------------------------------------------ about */
   about: {
     // The big scroll-revealed statement. *word* = italic, ^word^ = accent colour.
     statement:
-      "I'm Priyank — a computer-science graduate student who likes the *unglamorous* half of machine learning: cleaning the data, measuring where the model ^fails^, and shipping the pipeline so the result is actually useful to someone.",
+      "I'm Priyank, a computer-science graduate student drawn to the *unglamorous* half of machine learning — modeling the data, measuring where a model ^fails^, and shipping the pipeline that makes it useful.",
     paragraphs: [
-      "What I care about is the plumbing that makes ML trustworthy: reliable ETL, well-modeled warehouses, reproducible evaluation, clean APIs, and benchmarks that tell the truth.",
+      "My work sits where data engineering meets ML: reliable ETL, well-modeled warehouses, reproducible evaluation, and APIs that put models in front of real users.",
     ],
     // Optional count-up numbers, e.g. { value: 95, suffix: "%", label: "F1 on ..." }.
     // Left empty on purpose — the numbers already live in the log and projects.
@@ -57,8 +58,8 @@ export default {
       start: "Apr 2022",
       end: "Aug 2022",
       points: [
-        "Developed iOS task-management features with calendar integration, improving user engagement by 30%.",
-        "Optimized app performance, cutting load times by 40% and keeping large task lists responsive.",
+        "Shipped iOS task-management features with calendar integration, increasing user engagement by 30%.",
+        "Cut load times by 40% through performance work, keeping large task lists responsive.",
       ],
     },
     {
@@ -68,10 +69,10 @@ export default {
       start: "Jan 2023",
       end: "Aug 2023",
       points: [
-        "Ran EDA across five years of software-sales data to surface what had actually driven the business.",
-        "Trained SVMs on 3,000+ sales records to 95% accuracy for performance classification; built regression models reaching 92% for revenue prediction.",
-        "Applied clustering for customer segmentation, lifting targeted acquisition by 15%.",
-        "Engineered features and benchmarked models with Python, scikit-learn and proper evaluation metrics.",
+        "Analyzed five years of software-sales data to surface what actually drove the business.",
+        "Trained SVM classifiers on 3,000+ sales records (95% accuracy) and regression models for revenue prediction (92%).",
+        "Segmented customers with clustering, lifting targeted acquisition by 15%.",
+        "Engineered features and benchmarked models in Python and scikit-learn.",
       ],
     },
     {
@@ -81,10 +82,10 @@ export default {
       start: "Sep 2025",
       end: "Dec 2025",
       points: [
-        "Built an OCR preprocessing pipeline using Tesseract cues and Vision Transformers (ViT) to raise medical-document extraction quality and cut manual review.",
-        "Developed transformer-embedding classifiers for medical-device routing — 95% F1 in internal evaluations.",
-        "Ran structured QA experiments on MedTech Q&A outputs, isolating failure patterns and lifting reviewed accuracy to 90%.",
-        "Wired model outputs into reproducible Python evaluation pipelines for automated routing and benchmarking; curated datasets in Label Studio.",
+        "Built an OCR preprocessing pipeline combining Tesseract cues with Vision Transformers, improving medical-document extraction and reducing manual review.",
+        "Developed transformer-embedding classifiers for medical-device routing, reaching 95% F1 in internal evaluation.",
+        "Ran structured QA experiments on MedTech Q&A outputs, isolated failure patterns, and raised reviewed accuracy to 90%.",
+        "Integrated model outputs into reproducible Python evaluation pipelines for routing and benchmarking; curated training data in Label Studio.",
       ],
     },
   ],
@@ -92,7 +93,7 @@ export default {
   // The final, open-ended row of the training log.
   nextEpoch: {
     title: "Your team",
-    text: "Looking for a full-time role in AI / ML or data engineering. If you're building something that learns — or the pipelines that feed it — let's talk.",
+    text: "I'm looking for a full-time role in AI / ML or data engineering. If you're building something that learns — or the pipelines that feed it — I'd love to talk.",
     cta: "Start a conversation",
   },
 
@@ -104,7 +105,7 @@ export default {
       kind: "LLM agents · Browser automation",
       year: "2026",
       summary:
-        "An LLM learns a legacy back-office UI once; what it learns becomes a typed, reviewable capability that replays deterministically — no model in the loop.",
+        "An LLM learns a legacy back-office UI once. What it learns becomes a typed, reviewable capability that replays deterministically — no model in the loop.",
       tags: ["Python", "Claude", "Playwright", "Agents"],
       cover: "", // optional image, e.g. "assets/projects/shot.jpg" — empty = generative art
       coverStyle: "orbits", // contours | flow | orbits | halftone | spectrum | "" (auto)
@@ -128,7 +129,7 @@ export default {
       kind: "LLM · Retrieval",
       year: "2026",
       summary:
-        "Chat with several PDFs at once. Answers are grounded in the documents, cite the exact file and page, and admit it when nothing relevant is found.",
+        "Ask questions across many PDFs at once. Answers are grounded in the documents, cite the exact file and page, and say so when the documents don't know.",
       tags: ["Python", "FastAPI", "FAISS", "Embeddings", "Claude"],
       cover: "",
       coverStyle: "contours",
@@ -150,7 +151,7 @@ export default {
       title: "Pharma Sales *Data Warehouse*",
       kind: "Data engineering · SQL",
       year: "2024",
-      summary: "An ETL pipeline from CSV and XML sources into a dimensional warehouse, with analytical reports on pharmaceutical sales.",
+      summary: "An ETL pipeline that turns raw CSV and XML sales data into a dimensional warehouse, with analytical reporting on top.",
       tags: ["R", "SQL", "MySQL", "SQLite", "ETL"],
       cover: "",
       coverStyle: "contours",
@@ -172,7 +173,7 @@ export default {
       kind: "Machine learning · Sports analytics",
       year: "2026",
       summary:
-        "Predicts whether a starting pitcher will suffer an arm injury within the next 21 days, from Statcast pitch tracking, workload and injury history.",
+        "Predicts whether a starting pitcher will suffer an arm injury in the next 21 days, using Statcast pitch tracking, workload, and injury history.",
       tags: ["Python", "XGBoost", "scikit-learn", "pybaseball"],
       cover: "",
       coverStyle: "spectrum",
@@ -217,7 +218,7 @@ export default {
       title: "Crime Analysis of *Boston*",
       kind: "ML · NLP · Geospatial",
       year: "2024",
-      summary: "Predicting crime severity, mapping hotspots over time, and reading public sentiment about safety in Boston.",
+      summary: "Predicting crime severity, mapping hotspots over time, and gauging public sentiment about safety in Boston.",
       tags: ["XGBoost", "NLP", "Sentiment analysis", "Geospatial"],
       cover: "",
       coverStyle: "flow",
@@ -337,7 +338,7 @@ export default {
   contact: {
     // *word* = italic, ^word^ = accent colour
     headline: "Let's build something that *learns*.",
-    text: "The inbox is open — for roles, collaborations, or a good argument about retrieval.",
+    text: "My inbox is open — for roles, collaborations, or a good argument about retrieval.",
   },
 
   /* ---------------------------------------------------------------- music */
@@ -348,10 +349,10 @@ export default {
   //  2. src: an MP3 in assets/ that you have the rights to.
   //  3. neither: the site composes its own ambient soundtrack live.
   music: {
-    spotify: "https://open.spotify.com/track/0KnVSP9uNabmU6ph25BOSK",
+    spotify: "", // e.g. "https://open.spotify.com/track/0KnVSP9uNabmU6ph25BOSK" (shows a small Spotify player)
     src: "",
-    title: "Middle of Nowhere",
-    credit: "Macabre Plaza",
+    title: "Latent Drift",
+    credit: "generative",
   },
 
   /* ------------------------------------------------------------- settings */

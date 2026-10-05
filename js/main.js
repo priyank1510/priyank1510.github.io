@@ -102,9 +102,21 @@ function render() {
 
   /* ---- about */
   $('[data-slot="about"]').innerHTML = `
-    <p class="about__statement" data-words>${fmt(about.statement)}</p>
-    <div class="about__cols">
-      ${about.paragraphs.map((p) => `<p data-reveal>${fmt(p)}</p>`).join("")}
+    <div class="about__grid${P.photo ? " has-photo" : ""}">
+      ${
+        P.photo
+          ? `<figure class="portrait">
+        <div class="portrait__media"><img src="${esc(P.photo)}" alt="Portrait of ${esc(P.name)}" width="900" height="900" loading="lazy" decoding="async" /></div>
+        <figcaption class="mono"><span>Fig. 00</span>${esc(P.name)}</figcaption>
+      </figure>`
+          : ""
+      }
+      <div class="about__text">
+        <p class="about__statement" data-words>${fmt(about.statement)}</p>
+        <div class="about__cols">
+          ${about.paragraphs.map((p) => `<p data-reveal>${fmt(p)}</p>`).join("")}
+        </div>
+      </div>
     </div>
     ${about.stats?.length ? `<dl class="stats">
       ${about.stats
@@ -176,9 +188,14 @@ function render() {
       </div>`
         : ""
     }
-    <div class="grid">
-      ${featured.map(({ p, i }) => cardHTML(p, i)).join("")}
-      ${settings.showInProgressCard ? pendingHTML(projects.length) : ""}
+    <div class="stack">
+      ${(() => {
+        const n = featured.length + (settings.showInProgressCard ? 1 : 0);
+        return (
+          featured.map(({ p, i }, k) => slabHTML(p, i, k, n)).join("") +
+          (settings.showInProgressCard ? pendingSlabHTML(projects.length, featured.length, n) : "")
+        );
+      })()}
     </div>
     ${
       archive.length
@@ -286,53 +303,64 @@ function render() {
     <span>${links.map((l) => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join(" · ")}</span>`;
 }
 
-function cardHTML(p, i) {
-  const style = p.coverStyle || "";
+/* A project "slab": pinned, product-style panel. k = position in the stack, n = stack size. */
+function slabHTML(p, i, k, n) {
+  const slug = esc(p.slug);
   const media = p.cover
-    ? `<img src="${esc(p.cover)}" alt="${esc(plain(p.title))} — cover" loading="lazy" decoding="async" />`
-    : `<canvas class="card__canvas" data-cover="${esc(p.slug)}" data-cover-style="${esc(style)}"></canvas>`;
+    ? `<img src="${esc(p.cover)}" alt="" loading="lazy" decoding="async" />`
+    : `<canvas data-cover="${slug}" data-cover-style="${esc(p.coverStyle || "")}"></canvas>`;
+  const gh = p.links?.github;
+  const metrics = (p.metrics || []).slice(0, 2);
   return `
-  <article class="card" data-tags="${esc((p.tags || []).join("|"))}">
-    <a class="card__link" href="#/p/${esc(p.slug)}" data-cursor="Open">
-      <div class="card__media" data-tilt>
-        <div class="card__inner">
-          ${media}
-          <div class="card__glare"></div>
-          <div class="card__hud mono"><span>${expId(i)}</span></div>
-          <span class="card__cta mono">Read the case ${ARROW}</span>
+  <article class="slab" data-tags="${esc((p.tags || []).join("|"))}" style="--k:${k}">
+    <div class="slab__card">
+      <a class="slab__media" href="#/p/${slug}" data-cursor="Open" aria-label="Case study: ${esc(plain(p.title))}">
+        ${media}
+        <span class="slab__count mono">${pad(k + 1)}<i>/</i>${pad(n)}</span>
+      </a>
+      <div class="slab__body">
+        <div class="slab__meta mono"><span class="slab__id">${expId(i)}</span><span>${esc(p.kind || "")}</span>${p.year ? `<span class="slab__year">${esc(p.year)}</span>` : ""}</div>
+        <h3 class="slab__title"><a href="#/p/${slug}">${fmt(p.title)}</a></h3>
+        <p class="slab__summary">${fmt(p.summary)}</p>
+        ${
+          metrics.length
+            ? `<dl class="slab__metrics">${metrics.map((m) => `<div><dt>${esc(m.value)}</dt><dd>${esc(m.label)}</dd></div>`).join("")}</dl>`
+            : p.highlights?.[0]
+              ? `<p class="slab__note">${fmt(p.highlights[0])}</p>`
+              : ""
+        }
+        <div class="slab__foot">
+          ${p.tags?.length ? `<ul class="chips">${p.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
+          <div class="slab__actions">
+            <a class="btn" href="#/p/${slug}" data-magnetic><span data-scramble>Case study</span>${ARROW}</a>
+            ${gh ? `<a class="btn btn--ghost" href="${esc(gh)}" target="_blank" rel="noopener" data-magnetic><span data-scramble>Source</span>${ARROW}</a>` : ""}
+          </div>
         </div>
       </div>
-      <div class="card__body">
-        <div class="card__meta mono"><span>${esc(p.kind || "")}</span>${p.year ? `<span>${esc(p.year)}</span>` : ""}</div>
-        <h3 class="card__title">${fmt(p.title)}</h3>
-        <p class="card__summary">${fmt(p.summary)}</p>
-        ${p.tags?.length ? `<ul class="chips">${p.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
-      </div>
-    </a>
+      <div class="slab__shade" aria-hidden="true"></div>
+    </div>
   </article>`;
 }
 
-function pendingHTML(n) {
+function pendingSlabHTML(i, k, n) {
   return `
-  <article class="card card--pending" data-tags="*">
-    <div class="card__media">
-      <div class="card__inner pending">
+  <article class="slab slab--pending" data-tags="*" style="--k:${k}">
+    <div class="slab__card">
+      <div class="slab__media pending">
         <div class="pending__grid" aria-hidden="true"></div>
-        <div class="pending__hud mono">
-          <span>${expId(n)}</span>
-          <span class="pending__status"><i class="pulse"></i>training</span>
-        </div>
         <div class="pending__term mono" aria-hidden="true">
           <div>epoch <b data-pending-epoch>001</b> / ∞</div>
           <div>loss&nbsp;&nbsp;<b data-pending-loss>2.3026</b></div>
           <div class="pending__bar"><i data-pending-bar></i></div>
         </div>
+        <span class="slab__count mono">${pad(k + 1)}<i>/</i>${pad(n)}</span>
       </div>
-    </div>
-    <div class="card__body">
-      <div class="card__meta mono"><span>In progress</span></div>
-      <h3 class="card__title">Next <em>experiment</em></h3>
-      <p class="card__summary">${fmt(SITE.settings.inProgressText)}</p>
+      <div class="slab__body">
+        <div class="slab__meta mono"><span class="slab__id">${expId(i)}</span><span><i class="pulse"></i>Training</span></div>
+        <h3 class="slab__title">Next <em>experiment</em></h3>
+        <p class="slab__summary">${fmt(SITE.settings.inProgressText)}</p>
+      </div>
+      <div class="slab__shade" aria-hidden="true"></div>
     </div>
   </article>`;
 }
@@ -450,7 +478,7 @@ function initCursor() {
 
   document.addEventListener("pointerover", (e) => {
     const labelled = e.target.closest("[data-cursor]");
-    const interactive = e.target.closest("a, button, [data-tilt], input, label");
+    const interactive = e.target.closest("a, button, input, label");
     root.classList.toggle("cursor-label", !!labelled);
     root.classList.toggle("cursor-hover", !!interactive && !labelled);
     label.textContent = labelled ? labelled.dataset.cursor : "";
@@ -530,13 +558,6 @@ function initCovers(scope = document) {
     const c = createCover(cv, cv.dataset.cover, cv.dataset.coverStyle);
     covers.set(cv, c);
     c.render();
-    const host = cv.closest(".card__link");
-    if (host && !reduced) {
-      host.addEventListener("pointerenter", () => c.play());
-      host.addEventListener("pointerleave", () => c.pause());
-      host.addEventListener("focus", () => c.play());
-      host.addEventListener("blur", () => c.pause());
-    }
   });
 }
 
@@ -545,26 +566,6 @@ addEventListener("resize", () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => covers.forEach((c) => c.resize()), 150);
 });
-
-/* ================================================================ tilt */
-function initTilt() {
-  if (!finePointer || reduced) return;
-  $$("[data-tilt]").forEach((el) => {
-    const inner = $(".card__inner", el);
-    const rx = gsap.quickTo(inner, "rotationX", { duration: 0.7, ease: "power3" });
-    const ry = gsap.quickTo(inner, "rotationY", { duration: 0.7, ease: "power3" });
-    el.addEventListener("pointermove", (e) => {
-      const r = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top) / r.height;
-      ry((px - 0.5) * 12);
-      rx((0.5 - py) * 10);
-      inner.style.setProperty("--gx", `${px * 100}%`);
-      inner.style.setProperty("--gy", `${py * 100}%`);
-    });
-    el.addEventListener("pointerleave", () => { rx(0); ry(0); });
-  });
-}
 
 /* =========================================================== filters */
 function initFilters() {
@@ -578,7 +579,7 @@ function initFilters() {
       b.classList.toggle("is-active", b === btn);
       b.setAttribute("aria-pressed", String(b === btn));
     });
-    const items = $$(".grid .card, .archive .row");
+    const items = $$(".stack .slab, .archive .row");
     items.forEach((it) => {
       const tags = (it.dataset.tags || "").split("|");
       const show = tag === "*" || tags.includes(tag) || it.dataset.tags === "*";
@@ -636,7 +637,7 @@ function initPending() {
   const loss = $("[data-pending-loss]");
   const bar = $("[data-pending-bar]");
   let e = 1, l = 2.3026, visible = false;
-  new IntersectionObserver(([en]) => (visible = en.isIntersecting)).observe(ep.closest(".card"));
+  new IntersectionObserver(([en]) => (visible = en.isIntersecting)).observe(ep.closest(".slab"));
   setInterval(() => {
     if (!visible || document.hidden) return;
     e += 1;
@@ -982,6 +983,16 @@ function initReveals() {
     });
   }
 
+  // portrait develops from the bottom up
+  const portrait = $(".portrait__media img");
+  if (portrait) {
+    gsap.fromTo(portrait, { clipPath: "inset(100% 0% 0% 0%)" }, {
+      clipPath: "inset(0% 0% 0% 0%)", duration: 1.6, ease: "expo.out",
+      scrollTrigger: { trigger: ".portrait", start: "top 85%" },
+    });
+    gsap.from(".portrait figcaption, .portrait__media", { "--frame": 0, opacity: 0, duration: 1.2, delay: 0.3, ease: "power3.out", scrollTrigger: { trigger: ".portrait", start: "top 85%" } });
+  }
+
   // stats count up
   $$("[data-count]").forEach((el) => {
     const v = parseFloat(el.dataset.count);
@@ -1022,20 +1033,46 @@ function initReveals() {
     ScrollTrigger.create({ trigger: ep, start: "top 60%", end: "bottom 40%", toggleClass: "is-current" });
   });
 
-  // project cards — rise in 3D
-  $$(".grid .card").forEach((card, i) => {
-    gsap.from(card, {
-      y: 120, rotateX: 18, opacity: 0, transformPerspective: 1200, transformOrigin: "50% 0%",
-      duration: 1.4, ease: "expo.out", delay: (i % 2) * 0.12,
-      scrollTrigger: { trigger: card, start: "top 92%" },
+  // projects — pinned slabs: each one arrives, the one beneath recedes into the stack
+  const slabs = $$(".stack .slab");
+  slabs.forEach((slab) => {
+    const card = $(".slab__card", slab);
+    gsap.from(card, { y: 90, opacity: 0, duration: 1.3, ease: "expo.out", scrollTrigger: { trigger: slab, start: "top 92%" } });
+    gsap.fromTo($(".slab__media", slab), { clipPath: "inset(0% 100% 0% 0%)" }, {
+      clipPath: "inset(0% 0% 0% 0%)", duration: 1.6, ease: "expo.inOut",
+      scrollTrigger: { trigger: slab, start: "top 80%" },
     });
-    const media = $(".card__inner", card);
-    if (media && !reduced) {
-      gsap.fromTo(media, { clipPath: "inset(18% 12% 18% 12%)" }, {
-        clipPath: "inset(0% 0% 0% 0%)", duration: 1.6, ease: "expo.out",
-        scrollTrigger: { trigger: card, start: "top 92%" },
+    gsap.from($$(".slab__body > *", slab), {
+      y: 28, opacity: 0, stagger: 0.07, duration: 1.1, ease: "power3.out", delay: 0.25,
+      scrollTrigger: { trigger: slab, start: "top 80%" },
+    });
+  });
+  gsap.matchMedia().add("(min-width: 901px)", () => {
+    slabs.forEach((slab, i) => {
+      const next = slabs[i + 1];
+      if (!next) return;
+      const st = () => ({
+        trigger: next,
+        start: "top bottom",
+        end: () => `top ${parseFloat(getComputedStyle(next).top) || 0}px`,
+        scrub: true,
       });
-    }
+      gsap.to($(".slab__card", slab), { scale: 0.9, rotateX: 5, transformPerspective: 1600, transformOrigin: "50% 0%", ease: "none", scrollTrigger: st() });
+      gsap.to($(".slab__shade", slab), { opacity: 0.6, ease: "none", scrollTrigger: st() });
+    });
+  });
+  // only the slab in front animates its cover
+  slabs.forEach((slab, i) => {
+    const c = covers.get($("canvas[data-cover]", slab));
+    if (!c) return;
+    const next = slabs[i + 1];
+    ScrollTrigger.create({
+      trigger: slab,
+      start: "top 75%",
+      endTrigger: next || slab,
+      end: next ? "top 55%" : "bottom 25%",
+      onToggle: (self) => (self.isActive ? c.play() : c.pause()),
+    });
   });
   $$(".archive .row").forEach((row) =>
     gsap.from(row, { opacity: 0, y: 24, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: row, start: "top 92%" } })
@@ -1257,7 +1294,6 @@ async function boot() {
   initScroll();
   initCursor();
   initCovers();
-  initTilt();
   initFilters();
   initPreview();
   initPending();

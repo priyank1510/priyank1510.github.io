@@ -3,7 +3,7 @@
 Personal portfolio of **Priyank Patel**, AI engineer. A hand-built static site with no build step and no framework:
 
 - **Latent field.** 52,000 GPU particles (Three.js + custom shaders) morph between ML figures as you scroll: embedding sphere → torus-knot manifold → loss landscape → latent clusters → tensor → accretion disk. Particles near the cursor push away and glow blue.
-- **Music.** "◈ Play" in the hero (or the equaliser button in the nav, or the `M` key) plays *Middle of Nowhere* by Macabre Plaza on a loop through Spotify's official player: the full song for visitors logged into Spotify, a short preview for everyone else. Spotify's rules require the small player (cover art + title) to stay visible while it plays. With no Spotify link set, the site falls back to *Latent Drift*, an ambient piece composed live in the browser.
+- **Music.** "◈ Play" in the hero (or the equaliser button in the nav, or the `M` key) plays *Latent Drift*, an ambient piece composed live in the browser — no visible player, and the particles pulse with it. Optionally set `music.spotify` to a Spotify link instead (Spotify requires its small player to stay visible while it plays).
 - **Generative covers.** Every project gets its own artwork (contours, flow fields, orbits, halftone or ridgelines), seeded by its slug. You never need a screenshot, and hovering a cover animates it.
 - **Name.** Set in Dela Gothic One as an anime-style title card: hard blue offset shadow, outlined surname.
 - **Training log.** Experience reads as epochs, with a loss curve that draws as you scroll.
@@ -54,7 +54,7 @@ Optional extras in `settings`: `showInProgressCard: true` adds an animated "curr
 
 | What | Where in `js/content.js` |
 | --- | --- |
-| Name, email, links, availability | `profile` |
+| Name, photo, email, links, availability | `profile` |
 | Hero tagline | `hero.tagline` |
 | Big "Abstract" statement + stats | `about` |
 | Jobs (the training log) | `experience` (oldest → newest) |
